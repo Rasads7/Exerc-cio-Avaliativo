@@ -1,0 +1,308 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+typedef struct Pessoa{
+  int id;
+  char nome[50];
+  char email[100];
+  char sexo[50];
+  char endereco[100];
+  double altura;
+  int vacina;
+}Usuario;
+
+int nusuarios = 0, nusuarios2 = 0;
+Usuario usuarios[1000], usuarios2[1000];
+
+void flush_stdin() {
+  int c; 
+  while ((c = getchar()) != '\n' && c != EOF) {}
+}
+
+void incluir(){
+  Usuario novousuario;
+
+  if(nusuarios > 1000){
+    printf("Limite de usuários atingido!");
+  }else{
+    printf("\nCadastro: ");
+    novousuario.id = rand() % 10000 + 1000;
+    printf("ID = %d", novousuario.id);
+    
+    printf("\nInforme seu nome: ");
+    scanf(" %100[^\n]s", novousuario.nome);
+    
+    int x = 0;
+    while (!x) {
+      printf("Informe seu email: ");
+      scanf(" %100[^\n]s", novousuario.email);
+
+      x = (strchr(novousuario.email, '@') != NULL);
+      if (!x) { 
+        printf("E-mail inválido! Digite novamente.\n");
+      }
+    }
+    
+    fgets(novousuario.sexo, sizeof(novousuario.sexo), stdin);
+    novousuario.sexo[strcspn(novousuario.sexo, "\n")] = '\0'; 
+    while (strcasecmp(novousuario.sexo, "masculino") != 0 && strcasecmp(novousuario.sexo, "feminino") != 0 &&
+    strcasecmp(novousuario.sexo, "indiferente") != 0) {
+      printf("Informe seu gênero (Masculino, Feminino ou Indiferente): ");
+      fgets(novousuario.sexo, sizeof(novousuario.sexo), stdin);
+      novousuario.sexo[strcspn(novousuario.sexo, "\n")] = '\0';
+    }
+
+    printf("Informe seu endereço: ");
+    scanf(" %100[^\n]s", novousuario.endereco);
+    
+    printf("Informe sua altura (de 1 a 2 metros): ");
+    scanf("%lf", &novousuario.altura);  
+    while (novousuario.altura < 1 || novousuario.altura > 2){  
+      printf("Digite uma altura válida (de 1 a 2 metros): ");
+      scanf("%lf", &novousuario.altura);
+    }
+    
+    printf("Informe se é vacinado(a)? (1 - Sim | 2 - Não): ");
+    scanf(" %d", &novousuario.vacina);
+    while (novousuario.vacina != 1 && novousuario.vacina != 2){
+      printf("Digite um valor válido.\nVacinado(a)? (1 - Sim | 2 - Não): ");
+      scanf(" %d", &novousuario.vacina);
+    }
+
+    usuarios[nusuarios++] = novousuario;
+    usuarios2[nusuarios2++] = novousuario;
+
+    printf("Cadastro concluído!\n");
+  }
+}
+
+void editar() {
+  int id;
+  
+  printf("\nInforme o ID do usuário que deseja editar: ");
+  scanf("%d", &id);
+
+  int i;
+  for (i = 0; i < nusuarios; i++) {    
+    if (usuarios[i].id == id) {      
+      printf("Informe seu novo nome completo: ");
+      scanf(" %100[^\n]s", usuarios[i].nome);      
+      usuarios[i].nome[strcspn(usuarios[i].nome, "\n")] = '\0';             
+      int x = 0;
+      while (!x) {         
+        printf("Informe seu novo email: ");
+        scanf(" %100[^\n]s", usuarios[i].email);    
+        x = (strchr(usuarios[i].email, '@') != NULL);
+        if (!x) {  
+          printf("E-mail inválido! Digite novamente.\n");
+        }
+      }
+       
+      fgets(usuarios[i].sexo, sizeof(usuarios[i].sexo), stdin);
+      usuarios[i].sexo[strcspn(usuarios[i].sexo, "\n")] = '\0';         
+      while (strcasecmp(usuarios[i].sexo, "masculino") != 0 && strcasecmp(usuarios[i].sexo, "feminino") != 0 && 
+      strcasecmp(usuarios[i].sexo, "indiferente") != 0) {      
+        printf("Informe seu gênero (Masculino, Feminino ou Indiferente): ");      
+        fgets(usuarios[i].sexo, sizeof(usuarios[i].sexo), stdin);
+        usuarios[i].sexo[strcspn(usuarios[i].sexo, "\n")] = '\0';       
+      }
+      
+      printf("Informe seu novo endereço: ");
+      scanf(" %100[^\n]s", usuarios[i].endereco);      
+      usuarios[i].endereco[strcspn(usuarios[i].endereco, "\n")] = '\0';  
+      printf("Informe sua nova altura (de 1 a 2 metros): ");
+      scanf("%lf", &usuarios[i].altura);
+      while (usuarios[i].altura < 1 || usuarios[i].altura > 2){
+        printf("Digite uma altura válida (de 1 a 2 metros): ");
+        scanf("%lf", &usuarios[i].altura);  
+      }    
+      
+      printf("Informe se é vacinado(a) (1 - sim / 2 - nao): ");
+      scanf("%d", &usuarios[i].vacina);
+      while (usuarios[i].vacina != 1 && usuarios[i].vacina != 2){       
+        printf("Digite um valor válido.\nVacinado(a)? (1 - Sim | 2 - Não): ");
+        scanf(" %d", &usuarios[i].vacina);  
+      }
+      
+      usuarios2[i] = usuarios[i];   
+            
+      printf("\nUsuário editado!\n");    
+    }else{
+      printf("\nUsuário não encontrado.\n");
+    }
+  }   
+}
+
+void excluir() {  
+  int id;
+  
+  printf("\nInforme o ID do usuário que deseja excluir: ");
+  scanf("%d", &id);
+  
+  int i, certeza;
+  
+  for (i = 0; i < nusuarios; i++) {    
+    if (usuarios[i].id == id) {    
+      int j;
+      printf("Certeza que deseja excluir este usuário (1 - Sim | 2 - Não)? ");
+      scanf("%d", &certeza);
+              
+      while (certeza !=1 && certeza != 2){        
+        printf("Digite um valor válido.\nCerteza que deseja excluir este usuário (1 - Sim | 2 - Não)? ");
+        scanf("%d", &certeza);
+      }
+      
+      if (certeza == 1){
+        for (j = i; j < nusuarios - 1; j++) {
+          usuarios[j] = usuarios[j + 1];
+        }
+        nusuarios--;
+        printf("Usuário excluído!\n");
+            return;      
+      }else{    
+        printf("Exclusão desfeita.\n");  
+            return;     
+      } 
+    }  
+  }  
+  printf("Usuário não encontrado.\n");
+}
+
+void buscar() {  
+  char email[100];
+    
+  printf("\nInforme o email do usuário: ");
+  scanf(" %100[^\n]s", email);    
+  email[strcspn(email, "\n")] = '\0';
+  
+  for (int i = 0; i < nusuarios; i++) {
+    if (strcmp(usuarios[i].email, email) == 0) {      
+      printf("\nID: %d\n", usuarios[i].id);
+      printf("Nome completo: %s\n", usuarios[i].nome);
+      printf("Email: %s\n", usuarios[i].email);
+      printf("Sexo: %s\n", usuarios[i].sexo);
+      printf("Endereco: %s\n", usuarios[i].endereco);
+      printf("Altura: %.2lf\n", usuarios[i].altura);
+      
+      if (usuarios[i].vacina == 1){
+        printf("Vacinado: Sim\n");      
+      }else{    
+        printf("Vacinado: Não\n");      
+      }
+    
+      printf("\nAperte qualquer tecla para continuar.\n");
+      flush_stdin();
+      getchar();
+    }  
+  }
+  
+  printf("Usuário não encontrado.\n");
+}
+
+void imprimir() {
+  printf("\nLISTA DE USUÁRIOS:");
+  for (int i = 0; i < nusuarios; i++) {
+    printf("\nID: %d\n", usuarios[i].id);
+    printf("Nome completo: %s\n", usuarios[i].nome);
+    printf("Email: %s\n", usuarios[i].email);
+    printf("Sexo: %s\n", usuarios[i].sexo);
+    printf("Endereco: %s\n", usuarios[i].endereco);
+    printf("Altura: %.2lf\n", usuarios[i].altura);    
+    if (usuarios[i].vacina == 1){     
+      printf("Vacina: Sim\n");
+    }else{
+      printf("Vacina: Não\n");  
+    }  
+  }
+  
+  if (nusuarios == 0){
+    printf("\nNão há usuários cadastrados\n");
+    return;
+  }
+    printf("\nAperte qualquer tecla para continuar.\n");
+    flush_stdin();
+    getchar();
+}
+
+void backup(){
+  
+  int escolha;
+  
+  printf("\nDeseja fazer backup dos dados (1 - Sim | 2 - Não)? ");
+  scanf("%d", &escolha);
+  
+  while (escolha != 1 && escolha != 2){
+    printf("Escolha um valor válido.\nDeseja fazer backup dos dados (1 - Sim | 2 - Não)? ");
+    scanf("%d", &escolha);
+  } 
+  if (escolha == 1){
+    nusuarios = nusuarios2;
+    for (int i = 0; i < nusuarios; i++){
+      usuarios[i] = usuarios2[i];
+    }
+    printf("Backup concluído!\n");
+  }else{
+    printf("Backup cancelado\n");
+  }
+}
+
+
+
+int main(void) {
+
+  int opcao, continuar = 1;
+
+  while(continuar == 1){
+    printf("\nMENU:\n");
+    printf("1: Novo usuário\n");
+    printf("2:Editar usuário\n");
+    printf("3: Excluir usuário\n");
+    printf("4: Buscar usuário\n");
+    printf("5; Mostrar todos os usuários cadastrados\n");
+    printf("6: Restaurar dados\n");
+    printf("7: Sair\n");
+    printf("Escolha a opção desejada: ");
+    scanf("%d", &opcao);
+    
+    while (opcao < 1 || opcao > 7){
+      printf("\nEscolha uma opção válida: ");
+      scanf("%d", &opcao);
+    }
+    
+    switch(opcao){
+      case 1: 
+        incluir();
+      break;
+      case 2:
+        editar();
+      break;
+      case 3:
+        excluir();
+      break;
+      case 4:
+        buscar();
+      break;
+      case 5:
+        imprimir();
+      break;
+      case 6:
+        backup();
+      break;
+      case 7:
+      break;
+    }
+    
+    if (opcao == 7){
+      printf("\nCerteza que deseja sair? (1 - Não | 2 - Sim): ");
+      scanf("%d", &continuar);
+    } else{
+      printf("\nDeseja voltar ao menu? (1 - Sim | 2 - Não): ");
+      scanf("%d", &continuar);
+    }
+  }
+
+  printf("\nObrigado");
+  
+  return 0;
+}
