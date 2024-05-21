@@ -1,2 +1,2 @@
-#Exercício em C
+# Exercício em C
 Atividade avaliativa em Linguagem C
